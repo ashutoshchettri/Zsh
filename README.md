@@ -1,4 +1,4 @@
-<h1 align="center">Custom zsh by Shell Ninja</h1>
+<h1 align="center">Custom Zsh</h1>
 
 ## Features
 
@@ -36,7 +36,7 @@ You can directly run the command bellow and it will automaticly clone the reposi
 - Run this command in your terminal:
 
 ```
-bash <(curl https://raw.githubusercontent.com/shell-ninja/Zsh/main/direct_install.sh)
+bash <(curl https://raw.githubusercontent.com/ashutoshchettri/Zsh/main/direct_install.sh)
 ```
 
 ### Manual Installation
@@ -44,7 +44,7 @@ bash <(curl https://raw.githubusercontent.com/shell-ninja/Zsh/main/direct_instal
 - Open terminal and run these commands.
 
 ```
-git clone --depth=1 https://github.com/shell-ninja/Zsh.git
+git clone --depth=1 https://github.com/ashutoshchettri/Zsh.git
 
 cd Zsh
 chmod +x install.sh
@@ -75,3 +75,6 @@ Simply go to `~/.zsh` directory. Inside it, you will find `.zshrc`, `alias.zsh` 
 | `pull`    | `git pull origin [branch]`                                                            | Pull from a specified branch.                                                                            |
 | `info`    | `git info`                                                                            | Git Information.                                                                                         |
 | `gpush`   | `binding of some commands`                                                            | Binding of `git add .`, `git commit -m "commit msg"`, `git push`                                         |
+
+
+### Big Thanks to [Shell Ninja](https://github.com/shell-ninja)
