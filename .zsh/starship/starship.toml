@@ -1,0 +1,87 @@
+"$schema" = 'https://starship.rs/config-schema.json'
+
+format = """
+[](fg:ctp_blue) \
+$directory\
+$git_branch\
+$git_status\
+$git_metrics\
+$c$rust$golang$nodejs$php$java$kotlin$haskell$python\
+$docker_context\
+$fill\
+$time\
+$line_break\
+$character"""
+
+palette = 'catppuccin_mocha'
+
+[palettes.catppuccin_mocha]
+ctp_bg = '#1e1e2e'
+ctp_subtext = '#a6adc8'
+ctp_blue = '#89b4fa'
+ctp_teal = '#94e2d5'
+ctp_green = '#a6e3a1'
+ctp_mauve = '#cba6f7'
+ctp_red = '#f38ba8'
+ctp_yellow = '#f9e2af'
+ctp_lavender = '#b4befe'
+
+[directory]
+style = "fg:ctp_lavender"
+format = "[$path]($style) "
+truncation_length = 3
+fish_style_pwd_dir_length = 1 
+
+[git_branch]
+symbol = "󰊢 "
+style = "fg:ctp_mauve"
+format = "[$symbol$branch]($style) "
+
+[git_status]
+style = "fg:ctp_red"
+format = "([$all_status$ahead_behind]($style) )"
+conflicted = "="
+ahead = "⇡${count}"
+behind = "⇣${count}"
+untracked = "?${count}"
+modified = "!${count}"
+staged = "+${count}"
+deleted = "✘${count}"
+
+[git_metrics]
+disabled = false
+added_style = "fg:ctp_green"
+deleted_style = "fg:ctp_red"
+format = "([+$added]($added_style) [-$deleted]($deleted_style) )"
+
+[nodejs]
+symbol = " "
+style = "fg:ctp_green"
+format = "[$symbol($version)]($style) "
+
+[rust]
+symbol = " "
+style = "fg:ctp_red"
+format = "[$symbol($version)]($style) "
+
+[python]
+symbol = " "
+style = "fg:ctp_yellow"
+format = "[$symbol($version)]($style) "
+
+[fill]
+symbol = " "
+
+[time]
+disabled = false
+time_format = "%I:%M %p"
+style = "fg:ctp_subtext"
+format = "[$time]($style)"
+
+[character]
+success_symbol = "[❯](ctp_teal)"
+error_symbol = "[❯](ctp_red)"
+vimcmd_symbol = "[❮](ctp_green)"
+
+[line_break]
+disabled = false
