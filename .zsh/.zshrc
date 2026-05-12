@@ -1,200 +1,245 @@
-# ~/.zsh/.zshrc
+# ~/.zshrc
 
 #==============================================================================
-
-# ███████╗██╗  ██╗███████╗██╗         ███╗   ██╗██╗███╗   ██╗     ██╗ █████╗ 
-# ██╔════╝██║  ██║██╔════╝██║         ████╗  ██║██║████╗  ██║     ██║██╔══██╗
-# ███████╗███████║█████╗  ██║         ██╔██╗ ██║██║██╔██╗ ██║     ██║███████║
-# ╚════██║██╔══██║██╔══╝  ██║         ██║╚██╗██║██║██║╚██╗██║██   ██║██╔══██║
-# ███████║██║  ██║███████╗███████╗    ██║ ╚████║██║██║ ╚████║╚█████╔╝██║  ██║
-# ╚══════╝╚═╝  ╚═╝╚══════╝╚══════╝    ╚═╝  ╚═══╝╚═╝╚═╝  ╚═══╝ ╚════╝ ╚═╝  ╚═╝
-                                                                            
+# ZENITH ZSH CONFIG
 #==============================================================================
 
-# fastfetch
-if command -v fastfetch &> /dev/null; then
-    # Only run fastfetch if we're in an interactive shell
-    if [[ $- == *i* ]]; then
-        if [[ -d "$HOME/.local/share/fastfetch" ]]; then
-            ffconfig=ascii-art
-            fastfetch --config "$ffconfig"
-            alias fastfetch='clr && fastfetch --config $ffconfig'
-        else
-            fastfetch
-        fi
-    fi
+#######################################################
+# Instant prompt (optional, if using powerlevel10k remove this)
+#######################################################
 
+# Uncomment if needed
+# [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]] && source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+
+#######################################################
+# Basic Environment
+#######################################################
+
+export EDITOR="nvim"
+export VISUAL="nvim"
+export SUDO_EDITOR="nvim"
+export FCEDIT="nvim"
+export BROWSER="com.brave.Browser"
+
+#######################################################
+# History
+#######################################################
+
+HISTSIZE=10000
+SAVEHIST=10000
+HISTFILE="$HOME/.zsh/.zsh_history"
+
+setopt APPEND_HISTORY
+setopt SHARE_HISTORY
+setopt HIST_IGNORE_SPACE
+setopt HIST_IGNORE_ALL_DUPS
+setopt HIST_SAVE_NO_DUPS
+setopt HIST_IGNORE_DUPS
+setopt HIST_FIND_NO_DUPS
+
+#######################################################
+# ZSH Options
+#######################################################
+
+setopt AUTO_CD
+setopt INTERACTIVE_COMMENTS
+setopt MAGIC_EQUAL_SUBST
+setopt NO_NOMATCH
+setopt NOTIFY
+setopt NUMERIC_GLOB_SORT
+setopt PROMPT_SUBST
+
+# Disable slow typo correction
+unsetopt CORRECT
+
+#######################################################
+# Completion System (FAST)
+#######################################################
+
+autoload -Uz compinit
+
+# Faster compinit using cache
+if [[ ! -f ~/.zcompdump || ~/.zcompdump -nt ~/.zcompdump.zwc ]]; then
+    compinit
+else
+    compinit -C
 fi
 
+#######################################################
+# Zinit Installation
+#######################################################
 
-
-
-############################################
-# Download Zinit, if it's not there yet
-############################################
 ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
-if [ ! -d "$ZINIT_HOME" ]; then
-   mkdir -p "$(dirname $ZINIT_HOME)"
-   git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
+
+if [[ ! -d "$ZINIT_HOME" ]]; then
+    mkdir -p "$(dirname "$ZINIT_HOME")"
+    git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
 fi
+
 source "${ZINIT_HOME}/zinit.zsh"
 
+#######################################################
+# Starship Prompt
+#######################################################
 
-############################################
-# Add in Starship
-############################################
-export STARSHIP_CONFIG="/home/zenith/.zsh/starship/starship-simple.toml"
-eval "$(starship init zsh)"
+export STARSHIP_CONFIG="$HOME/.zsh/starship/starship-gruvbox.toml"
 
+if command -v starship >/dev/null 2>&1; then
+    eval "$(starship init zsh)"
+fi
 
-############################################
-# Add in zsh plugins
-############################################
-zinit light zsh-users/zsh-syntax-highlighting
-zinit light zsh-users/zsh-completions
+#######################################################
+# Plugins (ASYNC / FAST)
+#######################################################
+
+# Autosuggestions
+zinit ice wait lucid
 zinit light zsh-users/zsh-autosuggestions
+
+# Completions
+zinit ice wait lucid
+zinit light zsh-users/zsh-completions
+
+# fzf-tab
+zinit ice wait lucid
 zinit light Aloxaf/fzf-tab
+
+# Vi Mode
+zinit ice wait lucid
 zinit light jeffreytse/zsh-vi-mode
 
-# Add in snippets
+# Syntax Highlighting MUST be last
+zinit ice wait lucid
+zinit light zsh-users/zsh-syntax-highlighting
+
+#######################################################
+# OMZ Snippets
+#######################################################
+
 zinit snippet OMZP::git
 zinit snippet OMZP::sudo
-# zinit snippet OMZP::tmuxinator
-# zinit snippet OMZP::docker
 zinit snippet OMZP::command-not-found
 
-# Disable the cursor style feature
-# ZVM_CURSOR_STYLE_ENABLED=false
+#######################################################
+# zsh-vi-mode Cursor Settings
+#######################################################
+
 ZVM_INSERT_MODE_CURSOR=$ZVM_CURSOR_BLINKING_BEAM
 ZVM_NORMAL_MODE_CURSOR=$ZVM_CURSOR_BLINKING_BLOCK
 ZVM_OPPEND_MODE_CURSOR=$ZVM_CURSOR_BLINKING_UNDERLINE
 
-# Load completions
-autoload -Uz compinit && compinit
-
-zinit cdreplay -q
-
-
-
-
 #######################################################
-# ZSH Basic Options
+# Keybindings
 #######################################################
-setopt autocd              # change directory just by typing its name
-setopt correct             # auto correct mistakes
-setopt interactivecomments # allow comments in interactive mode
-setopt magicequalsubst     # enable filename expansion for arguments of the form ‘anything=expression’
-setopt nonomatch           # hide error message if there is no match for the pattern
-setopt notify              # report the status of background jobs immediately
-setopt numericglobsort     # sort filenames numerically when it makes sense
-setopt promptsubst         # enable command substitution in prompt
 
-
-#######################################################
-# Environment Variables
-#######################################################
-export EDITOR=nvim
-export VISUAL=nvim
-export SUDO_EDITOR=nvim
-export FCEDIT=nvim
-export BROWSER=com.brave.Browser
-
-if command -v bat >/dev/null 2>&1; then
-	export MANPAGER="sh -c 'col -bx | bat -l man -p'"
-	export PAGER=bat
-fi
-
-if command -v fzf >/dev/null 2>&1; then
-	export FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS \
-	  --info=inline-right \
-	  --ansi \
-	  --layout=reverse \
-	  --border=rounded \
-	  --color=border:#27a1b9 \
-	  --color=fg:#c0caf5 \
-	  --color=gutter:#16161e \
-	  --color=header:#ff9e64 \
-	  --color=hl+:#2ac3de \
-	  --color=hl:#2ac3de \
-	  --color=info:#545c7e \
-	  --color=marker:#ff007c \
-	  --color=pointer:#ff007c \
-	  --color=prompt:#2ac3de \
-	  --color=query:#c0caf5:regular \
-	  --color=scrollbar:#27a1b9 \
-	  --color=separator:#ff9e64 \
-	  --color=spinner:#ff007c \
-	"
-fi
-
-
-#######################################################
-# ZSH Keybindings
-#######################################################
 bindkey -v
-# bindkey '^p' history-search-backward
-# bindkey '^n' history-search-forward
-# bindkey '^[w' kill-region
-# bindkey ' ' magic-space                           # do history expansion on space
-bindkey "^[[A" history-beginning-search-backward  # search history with up key
-bindkey "^[[B" history-beginning-search-forward   # search history with down key
 
+# History search with arrows
+bindkey "^[[A" history-beginning-search-backward
+bindkey "^[[B" history-beginning-search-forward
 
 #######################################################
-# History Configuration
+# Completion Styling
 #######################################################
-HISTSIZE=10000
-HISTFILE=~/.zsh/.zsh_history
-SAVEHIST=$HISTSIZE
-HISTDUP=erase
-setopt appendhistory
-setopt sharehistory
-setopt hist_ignore_space
-setopt hist_ignore_all_dups
-setopt hist_save_no_dups
-setopt hist_ignore_dups
-setopt hist_find_no_dups
 
-
-#######################################################
-# Completion styling
-#######################################################
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 zstyle ':completion:*' menu no
+
+# fzf-tab previews
 zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath'
 zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'ls --color $realpath'
+
+# Docker completion fixes
 zstyle ':completion:*:*:docker:*' option-stacking yes
 zstyle ':completion:*:*:docker-*:*' option-stacking yes
 
+#######################################################
+# bat
+#######################################################
+
+if command -v bat >/dev/null 2>&1; then
+    export MANPAGER="sh -c 'col -bx | bat -l man -p'"
+    export PAGER="bat"
+fi
 
 #######################################################
-# ZSH Syntax highlighting
+# fzf
 #######################################################
-# source ~/.zsh/zsh-syntax-highlighting.zsh
-# source ~/.zsh/catppuccin_mocha-zsh-syntax-highlighting.zsh
 
-
-#######################################################
-# eval functions
-#######################################################
 if command -v fzf >/dev/null 2>&1; then
-    eval "$(fzf --zsh)" # fzf
+
+    export FZF_DEFAULT_OPTS="
+    --height=10%
+    --layout=reverse
+    --border=rounded
+    --info=inline-right
+    --ansi
+    "
+
+    # Faster than eval "$(fzf --zsh)"
+    [[ -f /usr/share/fzf/key-bindings.zsh ]] && source /usr/share/fzf/key-bindings.zsh
+    [[ -f /usr/share/fzf/completion.zsh ]] && source /usr/share/fzf/completion.zsh
 fi
 
-if command -v thefuck >/dev/null 2>&1; then
-    eval "$(thefuck --alias)" # thefu*k
-    eval "$(thefuck --alias hell)" # thefu*k "hell"
-    eval "$(thefuck --alias damn)" # thefu*k "damn"
-fi
+#######################################################
+# zoxide
+#######################################################
 
 if command -v zoxide >/dev/null 2>&1; then
     eval "$(zoxide init zsh)"
 fi
 
+#######################################################
+# thefuck (optional, still somewhat slow)
+#######################################################
+
+if command -v thefuck >/dev/null 2>&1; then
+    eval "$(thefuck --alias fk)"
+fi
 
 #######################################################
-# source alias and functions
+# Aliases and Functions
 #######################################################
-source ~/.zsh/alias.zsh
-source ~/.zsh/functions.zsh
+
+[[ -f ~/.zsh/alias.zsh ]] && source ~/.zsh/alias.zsh
+[[ -f ~/.zsh/functions.zsh ]] && source ~/.zsh/functions.zsh
+
+#######################################################
+# Fastfetch (ONLY ON FIRST TERMINAL)
+#######################################################
+
+if command -v fastfetch >/dev/null 2>&1; then
+    if [[ -z "$FASTFETCH_SHOWN" ]]; then
+        export FASTFETCH_SHOWN=1
+
+        if [[ -d "$HOME/.local/share/fastfetch" ]]; then
+            ffconfig="ascii-art"
+            fastfetch --config "$ffconfig"
+
+            alias fastfetch="clear && fastfetch --config $ffconfig"
+        else
+            fastfetch
+        fi
+    fi
+fi
+
+#######################################################
+# Replay cd hooks
+#######################################################
+
+zinit cdreplay -q
+
+#######################################################
+# Profiling (DISABLED)
+#######################################################
+
+# Uncomment for startup profiling
+# zmodload zsh/zprof
+# zprof
+
+export ANDROID_SDK_ROOT=$HOME/Android/Sdk
+export ANDROID_HOME=$ANDROID_SDK_ROOT
+export PATH=$PATH:$ANDROID_SDK_ROOT/emulator
+export PATH=$PATH:$ANDROID_SDK_ROOT/platform-tools
+export PATH=$PATH:$ANDROID_SDK_ROOT/cmdline-tools/latest/bin
